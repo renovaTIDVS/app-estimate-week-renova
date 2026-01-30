@@ -44,10 +44,11 @@ venta_col = 'pago_total_estimado' if 'pago_total_estimado' in df_all.columns els
 
 
 tz = pytz.timezone("America/Mazatlan")
+# Día actual y los próximos 7 días (8 días en total)
 now_tz = datetime.now(tz)
 today = now_tz.date()
-start_date = today + timedelta(days=1)
-end_date = start_date + timedelta(days=6)
+start_date = today
+end_date = today + timedelta(days=7)
 # Convertir columna de fecha a datetime y luego a zona horaria
 df_all[fecha_col] = pd.to_datetime(df_all[fecha_col], errors='coerce')
 df_all[fecha_col] = df_all[fecha_col].dt.tz_localize(tz, ambiguous='NaT', nonexistent='NaT').dt.date
@@ -138,7 +139,7 @@ if venta_col:
 			color=alt.Color('sucursal:N', title='Sucursal'),
 			tooltip=['sucursal', 'fecha_str', f'{venta_col}:Q']
 		).properties(
-			width=700, height=400, title='Ventas estimadas por sucursal (próximos 7 días)'
+			width=700, height=400, title='Ventas estimadas por sucursal'
 		)
 	st.altair_chart(chart1, use_container_width=True)
 
@@ -172,7 +173,7 @@ if venta_col:
 				color=alt.Color(f'{tipo_col}:N', title='Tipo'),
 				tooltip=[f'{tipo_col}', 'fecha_str', f'{venta_col}:Q']
 			).properties(
-				width=700, height=400, title='Ventas estimadas por tipo (filtrado, próximos 7 días)'
+				width=700, height=400, title='Ventas estimadas por tipo (dental/optica)'
 			)
 		st.altair_chart(chart2, use_container_width=True)
 
