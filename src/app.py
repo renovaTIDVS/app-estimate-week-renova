@@ -1,4 +1,6 @@
+
 import streamlit as st
+import pytz
 
 
 
@@ -40,11 +42,15 @@ tipo_col = 'tipo' if 'tipo' in df_all.columns else None
 venta_col = 'pago_total_estimado' if 'pago_total_estimado' in df_all.columns else None
 
 
-# Filtrar solo los próximos 7 días a partir de mañana (solo por día, sin horas)
-today = datetime.now().date()
+
+tz = pytz.timezone("America/Mazatlan")
+now_tz = datetime.now(tz)
+today = now_tz.date()
 start_date = today + timedelta(days=1)
 end_date = start_date + timedelta(days=6)
-df_all[fecha_col] = pd.to_datetime(df_all[fecha_col], errors='coerce').dt.date
+# Convertir columna de fecha a datetime y luego a zona horaria
+df_all[fecha_col] = pd.to_datetime(df_all[fecha_col], errors='coerce')
+df_all[fecha_col] = df_all[fecha_col].dt.tz_localize(tz, ambiguous='NaT', nonexistent='NaT').dt.date
 df_7d = df_all[(df_all[fecha_col] >= start_date) & (df_all[fecha_col] <= end_date)]
 
 if df_7d.empty:
